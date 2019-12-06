@@ -25,17 +25,20 @@ getPeople.send().then((people) => {
   this.people = people
 })
 ```
-In our main process we set up the MessageResponder that will respond to the message that we are sending from the render process. The `MessageResponder#respond` method is provided an anonymous function that will be invoked as the event handler when the message comes in.
+In our main process we set up the `MessageResponder` that will respond to the message that we are sending from the render process. The `MessageResponder#respond` method is provided an anonymous function that will serve as the event handler and will be called every time the event is handled. The event handler function must return a Promise.
 #### Main Process:
 ```javascript
 import MessageResponder from 'electron-ipc-helper'
 const getPeople = new MessageResponder('getPeople')
+
 getPeople.respond(() => {
-  return people
+  return new Promise((resolve, reject) => {
+    resolve(people)
+  })
 })
 ```
 ## An Example With Arguments
-You can include an argument along with your message. Simply provide the argument to `MessageSender#send`. When `MessageResponder#respond` invokes your event handler anonymous function it will be passed the argument that came with the event.
+You can include an argument along with your message. Simply provide the argument to `MessageSender#send`. The argument will be passed to the event handler anonymous function whenver it is called.
 #### Render Process:
 ```javascript
 const getPerson = new MessageSender('getPerson')
@@ -47,6 +50,25 @@ getPerson.send(this.selectedPersonName).then((person) => {
 ```javascript
 const getPerson = new MessageResponder('getPerson')
 getPerson.respond((personName) => {
-  return people.find(person => person.name === personName)
+  return new Promise((resolve, reject) => {
+    const person = people.find(p => p.name === personName)
+    resolve(person)
+  })
+})
+```
+
+## With a Promise Based Library
+In a real application you are very likely going to use `MessageReponder` with a Promise based library rather than crafting your own promises. You can of course craft your own, but more likely you are using a file transfer or database library that already returns Promises. Here's an example with Sequelize models:
+
+#### Main Process
+```javascript
+const getArtists = new MessageResponder('getArtists')
+getArtists.respond(() => {
+  return Artist.findAll()
+})
+
+const getArtist = new MessageResponder('getArtist')
+getArtist.respond((artistName) => {
+  return Artist.findAll({where: {name: artistName}})
 })
 ```
