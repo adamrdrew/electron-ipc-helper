@@ -1,11 +1,11 @@
 # Electron IPC Helper
 A couple of a classes that make Electron IPC a little easier. 
 
-When using IPC in Electron you often want to perform call and response operations where you send a request and get a response, not unlike using `fetch` with a REST API in a web app. The IPC API in Electron doesn't really follow that model and instead treats sending messages back and forth as seperate isolated events. To perform a simple query for example requires that the render process send the request event and then register a handler with a callback for the response event while the main process registers a handler with a callback for request event and then sends the response event. This means doing double the work for each event type. It also means that your render process code is filled with callbacks that can make it hard to reason about. Electron IPC Helper provides a couple of simple classes that handle all of this for you while exposing a simple API that feels more like a single asynchronous promise based query, like a `fetch`, than the standard Electron API does.
+When using IPC in Electron you often want to perform call and response operations where you send a request and get a response, not unlike using `fetch` with a REST API in a web app. The IPC API in Electron doesn't really follow that model and instead treats sending messages back and forth as seperate isolated events. To perform a simple query requires that the render process send the request event and then register a handler with a callback for the response event while the main process registers a handler with a callback for request event and then sends the response event. This means doing double the work for each event type. It also means that your render process code is filled with callbacks that can make it hard to reason about. Electron IPC Helper provides a couple of simple classes that handle all of this for you while exposing a simple API that feels more like a single asynchronous promise based query, like a `fetch`, than the standard Electron API does.
 
 * Allows you to register a single event for an IPC conversation instead of having to handle sending and recieving with seperate events
 * Provides a response to the sender asynchronously via a Promise rather than through a callback and a second event
-* Handles the work of registering a unique single-use response event and event handler for every IPC request to ensure that your requests get handled in the order you expect them to
+* Handles the work of registering a unique single-use response event and handler for every IPC response to ensure that your requests get handled in the order you expect them to
 
 ## Installation
 Install the module:
@@ -20,15 +20,18 @@ We start in the render process by creating a MessageSender instance. The string 
 #### Render Process:
 ```javascript
 import MessageSender from 'electron-ipc-helper'
+
 const getPeople = new MessageSender('getPeople')
+
 getPeople.send().then((people) => {
   this.people = people
 })
 ```
-In our main process we set up the `MessageResponder` that will respond to the message that we are sending from the render process. The `MessageResponder#respond` method is provided an anonymous function that will serve as the event handler and will be called every time the event is handled. The event handler function must return a Promise.
+In our main process we set up the `MessageResponder` that will respond to the message that we are sending from the render process. The `MessageResponder#respond` method is provided a function that will serve as the event handler and will be called every time the event is handled. The event handler function must return a Promise.
 #### Main Process:
 ```javascript
 import MessageResponder from 'electron-ipc-helper'
+
 const getPeople = new MessageResponder('getPeople')
 
 getPeople.respond(() => {
@@ -38,10 +41,11 @@ getPeople.respond(() => {
 })
 ```
 ## An Example With Arguments
-You can include an argument along with your message. Simply provide the argument to `MessageSender#send`. The argument will be passed to the event handler anonymous function whenver it is called.
+You can include an argument along with your message. Simply provide the argument to `MessageSender#send`. `MessageResponder` will recieve the argument and pass it to the handler function you defined.
 #### Render Process:
 ```javascript
 const getPerson = new MessageSender('getPerson')
+
 getPerson.send(this.selectedPersonName).then((person) => {
   this.selectedPersonInfo = person
 })
@@ -49,6 +53,7 @@ getPerson.send(this.selectedPersonName).then((person) => {
 #### Main Process:
 ```javascript
 const getPerson = new MessageResponder('getPerson')
+
 getPerson.respond((personName) => {
   return new Promise((resolve, reject) => {
     const person = people.find(p => p.name === personName)
