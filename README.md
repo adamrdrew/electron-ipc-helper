@@ -14,7 +14,7 @@ npm install --save electron-ipc-helper
 ## A Basic Example
 In this example our render code wants a list of people from the main process. You can imagine any operation where our render process wants information from the main process that requires an asynchronous request, such as asking the main process for something from a database or the filesystem.
 
-We start in the render process by creating a MessageSender instance. The string we provide MessageSender's constructor is the message the two processes will use; this string can be anything you want, so long as both processes agree on the message name. We can imagine that this code might appear in a click event handler for a button, or in an action in a VueX store or something like that.
+We start in the render process by creating a `MessageSender` instance. The string we provide the `MessageSender` constructor is the message the two processes will use; this string can be anything you want, so long as both processes agree on the message name. We can imagine that this code might appear in a click event handler for a button, or in an action in a VueX store or something like that.
 #### Render Process:
 ```javascript
 import MessageSender from 'electron-ipc-helper'
@@ -29,6 +29,8 @@ In our main process we set up the `MessageResponder` that will respond to the me
 #### Main Process:
 ```javascript
 import MessageResponder from 'electron-ipc-helper'
+
+const people = ["Dave", "Joan", "Mustafa", "Xi"]
 
 const getPeople = new MessageResponder('getPeople')
 
