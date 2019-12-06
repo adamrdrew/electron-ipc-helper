@@ -1,0 +1,11 @@
+{
+  "name": "electron-ipc-helper",
+  "version": "1.0.0",
+  "description": "Makes Electron IPC a little easier",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Adam Drew <adamrdrew@live.com> (www.propertyandmethod.com)",
+  "license": "MIT"
+}
