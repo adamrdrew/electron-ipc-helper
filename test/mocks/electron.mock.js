@@ -12,4 +12,8 @@ const ipcRenderer = {
   send: jest.fn()
 }
 
-export { ipcRenderer }
+const ipcMain = {
+  on: jest.fn()
+}
+
+export { ipcRenderer, ipcMain }
