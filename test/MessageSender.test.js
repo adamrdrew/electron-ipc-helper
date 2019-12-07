@@ -3,7 +3,7 @@ import MessageSender from '../lib/MessageSender'
 test('Instantiates and sets requestEvent', () => {
   const msg = 'testMessage'
   const sender = new MessageSender(msg)
-  expect(sender.requestEvent).toBe(msg)
+  expect(sender.requestEvent).toStrictEqual(msg)
 })
 
 test('Generates unique response events', () => {
@@ -25,6 +25,9 @@ test('#send returns a Promise', () => {
   const msg = 'testMessage'
   const sender = new MessageSender(msg)
   const promise = sender.send()
+  promise.catch(() => {
+    //make node happy
+  })
   expect(promise).toBeInstanceOf(Promise)
 })
 
@@ -32,8 +35,11 @@ test('#send gets a promise with a value in resolve from ipcRenderer', () => {
   const msg = 'testMessage'
   const sender = new MessageSender(msg)
   const promise = sender.send()
+  promise.catch(() => {
+    //make node happy
+  })
   promise.then((arg) => {
-    expect(arg).toBe('ipcRenderOnceWorked')
+    expect(arg).toStrictEqual('ipcRenderOnceWorked')
   })
 })
 
@@ -41,8 +47,11 @@ test('#send can provide ipcRenderer an argument that gets included in the promis
   const msg = 'testMessage'
   const sender = new MessageSender(msg)
   const promise = sender.send('argTest')
+  promise.catch(() => {
+    //make node happy
+  })
   promise.then((arg) => {
-    expect(arg).toBe('argTestWorked')
+    expect(arg).toStrictEqual('argTestWorked')
   })
 })
 
@@ -51,6 +60,6 @@ test('#send gets a promise that is rejected if there is an error thrown in ipcRe
   const sender = new MessageSender(msg)
   const promise = sender.send()
   promise.catch((err) => {
-    expect(err).toBe(new Error('This is a test'))
+    expect(err).toBeInstanceOf(Error)
   })
 })
