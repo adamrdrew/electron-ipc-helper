@@ -1,6 +1,6 @@
 {
   "name": "electron-ipc-helper",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Makes Electron IPC a little easier",
   "main": "index.js",
   "scripts": {
