@@ -37,6 +37,15 @@ test('#send gets a promise with a value in resolve from ipcRenderer', () => {
   })
 })
 
+test('#send can provide ipcRenderer an argument that gets included in the promise', () => {
+  const msg = 'testMessage'
+  const sender = new MessageSender(msg)
+  const promise = sender.send('argTest')
+  promise.then((arg) => {
+    expect(arg).toBe('argTestWorked')
+  })
+})
+
 test('#send gets a promise that is rejected if there is an error thrown in ipcRenderer', () => {
   const msg = 'pleaseRaiseException'
   const sender = new MessageSender(msg)
