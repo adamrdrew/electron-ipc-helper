@@ -80,3 +80,19 @@ getArtist.respond((artistName) => {
   return Artist.findAll({where: {name: artistName}})
 })
 ```
+
+## Development
+You are welcome to make improvements or fix any problems you see. If you see something you'd like changed you can either report an issue or fork, change it yourself, and send a PR.
+
+There's no rigging for working on this code in the context of this project by itself. You need to work on it from something else. I work on this code by including the checked-out code as a dependency in another project. For example, you could use [Vue CLI Electron Builder](https://github.com/nklayman/vue-cli-plugin-electron-builder) or [Fenestron Template](https://github.com/adamrdrew/fenestron-template) to quickly bootstrap an Electron project that you could then use to work on this. You could then install a checked-out version of this code with:
+
+```
+npm install --save ../electron-ipc-helper
+```
+
+Once you have your project pointing at the local repo you can easily do development.
+
+### Tests
+There are tests in the `tests` directory and a `test` npm script you can run. I also have this repo hooked up to Travis CI so if there's code on master it should be passing tests. If you add any methods please try to add tests. 
+
+
